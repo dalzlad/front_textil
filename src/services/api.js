@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:8000", // Ajusta según tu entorno
+  baseURL: "https://api-textil.onrender.com", // Ajusta según tu entorno
 });
 
 // Interceptor para agregar token a todas las peticiones
