@@ -27,9 +27,9 @@ const NuevoPedido = () => {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    const parsedValue = type === "number" ? Number(value) : value;
-    setPedido({ ...pedido, [name]: parsedValue });
+    const { name, value } = e.target;
+    // No convertir aquí a número para evitar problemas al borrar valores
+    setPedido({ ...pedido, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -40,7 +40,11 @@ const NuevoPedido = () => {
     }
 
     try {
-      await API.post("/pedidos", pedido);
+      await API.post("/pedidos", {
+        ...pedido,
+        cantidad: pedido.cantidad ? Number(pedido.cantidad) : null,
+        valor: Number(pedido.valor),
+      });
       toast.success("✅ Pedido creado con éxito");
       setPedido({
         cliente: "",

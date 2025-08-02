@@ -38,15 +38,20 @@ const EditarPedido = () => {
   }, [id]);
 
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    const parsedValue = type === "number" ? Number(value) : value;
-    setPedido((prev) => ({ ...prev, [name]: parsedValue }));
+    const { name, value } = e.target;
+    setPedido((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.put(`/pedidos/${id}`, pedido);
+      const pedidoAEnviar = {
+        ...pedido,
+        cantidad: pedido.cantidad ? Number(pedido.cantidad) : null,
+        valor: Number(pedido.valor),
+      };
+
+      await API.put(`/pedidos/${id}`, pedidoAEnviar);
       toast.success("✅ Pedido actualizado correctamente.");
       navigate("/lista-pedidos");
     } catch (error) {

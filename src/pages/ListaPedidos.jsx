@@ -87,27 +87,24 @@ const ListaPedidos = () => {
     );
 
     const url = `https://api.whatsapp.com/send?phone=${numeroConPrefijo}&text=${mensaje}`;
-
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (
-    <div className="min-h-screen bg-blue-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-blue-50 px-3 py-5 sm:px-6">
       {/* Encabezado */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold text-blue-900 mb-2 sm:mb-0">
-          Lista de Pedidos
-        </h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-5 gap-2">
+        <h1 className="text-2xl sm:text-3xl font-bold text-blue-900">Pedidos</h1>
+        <div className="flex gap-2 w-full sm:w-auto">
           <button
             onClick={manejarAgregar}
-            className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 flex items-center gap-2"
+            className="flex-1 sm:flex-none bg-green-600 text-white px-4 py-3 rounded-lg shadow hover:bg-green-700 flex items-center justify-center gap-2 text-sm"
           >
-            <FaPlus /> Agregar Pedido
+            <FaPlus /> Agregar
           </button>
           <button
             onClick={manejarCerrarSesion}
-            className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 flex items-center gap-2"
+            className="flex-1 sm:flex-none bg-red-500 text-white px-4 py-3 rounded-lg shadow hover:bg-red-600 flex items-center justify-center gap-2 text-sm"
           >
             <FaSignOutAlt /> Salir
           </button>
@@ -118,90 +115,71 @@ const ListaPedidos = () => {
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Buscar por cliente o prenda..."
+          placeholder="Buscar cliente o prenda..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
-          className="w-full sm:w-96 px-4 py-2 rounded border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 text-base"
         />
       </div>
 
-      {/* Tabla */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 shadow-md rounded-lg text-sm sm:text-base">
-          <thead className="bg-blue-200 text-blue-900">
-            <tr>
-              <th className="p-2 sm:p-3">Cliente</th>
-              <th className="p-2 sm:p-3">Prenda</th>
-              <th className="p-2 sm:p-3">Cantidad</th>
-              <th className="p-2 sm:p-3">Entrega</th>
-              <th className="p-2 sm:p-3">Valor</th>
-              <th className="p-2 sm:p-3">Estado</th>
-              <th className="p-2 sm:p-3 text-center">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pedidosFiltrados.length > 0 ? (
-              pedidosFiltrados.map((pedido) => {
-                const whatsappLimpio = pedido.whatsapp?.replace(/\D/g, "") || "";
-                const esValido = whatsappLimpio.length >= 10;
+      {/* Lista de Pedidos */}
+      <div className="space-y-4">
+        {pedidosFiltrados.length > 0 ? (
+          pedidosFiltrados.map((pedido) => {
+            const whatsappLimpio = pedido.whatsapp?.replace(/\D/g, "") || "";
+            const esValido = whatsappLimpio.length >= 10;
 
-                return (
-                  <tr key={pedido.id} className="border-t hover:bg-blue-50">
-                    <td className="p-2 sm:p-3">{pedido.cliente}</td>
-                    <td className="p-2 sm:p-3">{pedido.prenda}</td>
-                    <td className="p-2 sm:p-3">{pedido.cantidad}</td>
-                    <td className="p-2 sm:p-3">
-                      {pedido.fecha_entrega
-                        ? new Date(pedido.fecha_entrega).toLocaleDateString()
-                        : "Sin fecha"}
-                    </td>
-                    <td className="p-2 sm:p-3">
-                        {pedido.valor !== null
-                            ? new Intl.NumberFormat("es-CO", {
-                                style: "currency",
-                                currency: "COP",
-                                minimumFractionDigits: 0,
-                            }).format(pedido.valor)
-                            : "—"}
-                     </td>
-                    <td className="p-2 sm:p-3">{pedido.estado}</td>
-                    <td className="p-2 sm:p-3 flex gap-2 justify-center">
-                      <button
-                        onClick={() => manejarEditar(pedido.id)}
-                        className="text-blue-600 hover:text-blue-800"
-                        title="Editar"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => enviarWhatsApp(pedido)}
-                        className={`${
-                          esValido
-                            ? "text-green-600 hover:text-green-800"
-                            : "text-gray-400 cursor-not-allowed"
-                        }`}
-                        disabled={!esValido}
-                        title={
-                          esValido
-                            ? "Enviar estado por WhatsApp"
-                            : "Sin número válido"
-                        }
-                      >
-                        <FaWhatsapp />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center p-4 text-gray-500">
-                  No hay resultados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            return (
+              <div
+                key={pedido.id}
+                className="bg-white shadow rounded-xl p-4 space-y-1 text-gray-800 text-base"
+              >
+                <p><strong>👤 Cliente:</strong> {pedido.cliente}</p>
+                <p><strong>👕 Prenda:</strong> {pedido.prenda}</p>
+                <p><strong>🔢 Cantidad:</strong> {pedido.cantidad}</p>
+                <p>
+                  <strong>📅 Entrega:</strong>{" "}
+                  {pedido.fecha_entrega
+                    ? new Date(pedido.fecha_entrega).toLocaleDateString()
+                    : "Sin fecha"}
+                </p>
+                <p>
+                  <strong>💰 Valor:</strong>{" "}
+                  {pedido.valor !== null
+                    ? new Intl.NumberFormat("es-CO", {
+                        style: "currency",
+                        currency: "COP",
+                        minimumFractionDigits: 0,
+                      }).format(pedido.valor)
+                    : "—"}
+                </p>
+                <p><strong>📌 Estado:</strong> {pedido.estado}</p>
+
+                <div className="flex gap-3 justify-end pt-3">
+                  <button
+                    onClick={() => manejarEditar(pedido.id)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 text-sm"
+                  >
+                    <FaEdit /> Editar
+                  </button>
+                  <button
+                    onClick={() => enviarWhatsApp(pedido)}
+                    disabled={!esValido}
+                    className={`${
+                      esValido
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-gray-300 cursor-not-allowed"
+                    } text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm`}
+                  >
+                    <FaWhatsapp /> WhatsApp
+                  </button>
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-center text-gray-500 text-lg">No hay resultados.</p>
+        )}
       </div>
 
       {/* Paginación */}
@@ -209,19 +187,19 @@ const ListaPedidos = () => {
         <button
           onClick={() => setPagina(pagina - 1)}
           disabled={pagina === 1}
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50"
         >
-          Anterior
+          ⬅ Anterior
         </button>
-        <span className="text-gray-700">
+        <span className="text-gray-700 text-lg font-medium">
           Página {pagina} de {totalPaginas}
         </span>
         <button
           onClick={() => setPagina(pagina + 1)}
           disabled={pagina === totalPaginas}
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 disabled:opacity-50"
+          className="px-4 py-2 bg-gray-300 rounded-lg hover:bg-gray-400 disabled:opacity-50"
         >
-          Siguiente
+          Siguiente ➡
         </button>
       </div>
     </div>
